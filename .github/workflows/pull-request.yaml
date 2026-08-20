@@ -1,0 +1,25 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: ./.github/workflows/quality.yaml
+
+  test:
+    uses: ./.github/workflows/test.yaml
+    with:
+      frontend_unit: true
+      frontend_browser: true
+      native: true
+      native_os: ubuntu-22.04

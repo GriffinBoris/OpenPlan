@@ -1,0 +1,74 @@
+[package]
+name = "opentranscribe-desktop"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "opentranscribe_desktop"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[[bin]]
+name = "opentranscribe"
+path = "src/main.rs"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+bindgen = { version = "=0.64.0", default-features = false, features = ["runtime"] }
+tauri-build = { version = "2.5.6", features = [] }
+
+[dependencies]
+atomic-write-file = "0.3.0"
+arboard = { version = "3.6.1", default-features = false }
+base64 = "0.23.0"
+chrono.workspace = true
+cpal = "0.18.1"
+crossbeam-channel = "0.5.15"
+enigo = "0.6.1"
+futures-util = "0.3.33"
+hex = "0.4.3"
+hound = "3.5.1"
+http = "1.5.0"
+keyring = "4.1.5"
+log = "0.4.29"
+opentranscribe-domain = { path = "../../../crates/domain" }
+opentranscribe-transcriber-protocol = { path = "../../../crates/transcriber-protocol" }
+rusqlite = { version = "0.40.1", features = ["bundled"] }
+reqwest = { version = "0.13.4", default-features = false, features = ["blocking", "json", "multipart", "rustls"] }
+serde.workspace = true
+serde_json.workspace = true
+sha2 = "0.11.0"
+sonora = "=0.2.0"
+symphonia = { version = "0.6.0", features = ["all"] }
+tauri = { version = "2.11.5", features = ["macos-private-api", "protocol-asset", "tray-icon"] }
+tauri-plugin-dialog = "2.7.2"
+tauri-plugin-global-shortcut = "2.3.2"
+tauri-plugin-opener = "2.5.4"
+tauri-plugin-process = "2.3.1"
+tauri-plugin-shell = "2.3.5"
+tauri-plugin-updater = "2.10.1"
+tempfile = "3.27.0"
+thiserror.workspace = true
+tokio = { version = "1.53.1", features = ["net", "rt", "sync", "time"] }
+tokio-tungstenite = { version = "0.30.0", features = ["rustls-tls-webpki-roots"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "=0.2.189"
+screencapturekit = { version = "8.0.1", features = ["macos_13_0"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+# CPAL 0.18 allows both the 0.61 and 0.62 Windows bindings, while Tauri 2.11
+# uses 0.61. Keeping CPAL on the same bindings prevents incompatible COM traits.
+windows = "=0.61.3"
+windows-core = "=0.61.2"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "=0.2.189"
+pipewire = "=0.6.0"
+pipewire-sys = "=0.6.0"
+libspa = "=0.6.0"
+libspa-sys = "=0.6.0"
